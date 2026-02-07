@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine? 💖</title>
+
+    <style>
+        body {
+            font-family: "Comic Sans MS", sans-serif;
+            background: #ffe6f2;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            color: #E167F0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(152, 86, 86, 0.1);
+            position: relative;
+        }
+
+        button {
+            background: #CC23AA;
+            border: none;
+            padding: 12px 22px;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 17px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #ff1a66;
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .heart {
+            position: fixed;
+            font-size: 30px;
+            animation: floatUp 1.5s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-120px) scale(1.8);
+                opacity: 0;
+            }
+        }
+
+        .wiggle {
+            animation: wiggleAnim 0.4s ease;
+        }
+
+        @keyframes wiggleAnim {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(3deg);
+            }
+
+            75% {
+                transform: rotate(-3deg);
+            }
+        }
+
+        .pulse {
+            animation: pulseAnim 0.4s ease;
+        }
+
+        @keyframes pulseAnim {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .question {
+            margin: 20px 0;
+            font-size: 20px;
+        }
+
+        input[type="radio"] {
+            margin-right: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="startScreen">
+        <h1> Hlo Bavaaa! ❤️</h1>
+        <p>I have some **very serious 😌** questions for you "Don't Skip"</p>
+        <p>Answer honestly… I will calculate the score, let's see 😏</p>
+        <button onclick="startQuiz()">Start 💞</button>
+    </div>
+    <h2 id="scoreText"></h2>
+
+    <div class="container hidden" id="quizScreen">
+        <h2 id="questionText"></h2>
+        <div id="options"></div>
+        <button onclick="nextQuestion()">Next ➜</button>
+    </div>
+
+    <div class="container hidden" id="scoreScreen">
+        <h1>Your Love Score ❤️</h1>
+        <h2 id="scoreText"></h2>
+        <p id="scoreMessage"></p>
+        <button onclick="finalScreen()">Continue</button>
+    </div>
+
+    <div class="container hidden" id="finalScreen">
+        <h1>🌹 One Last Question... 🌹</h1>
+        <h2>Will you be my Valentine? 💖</h2>
+
+        <button onclick="yes()">YES 🥰</button>
+        <button onclick="no()" id="noBtn">NO 😭</button>
+
+        <p id="finalAnswer" style="font-size:20px; margin-top:20px;"></p>
+    </div>
+
+    <script>
+        let currentQ = 0;
+        let score = 0;
+
+        const questions = [
+            {
+                q: "How much do you love your wife? 😌",
+                options: [
+                    { text: "More than biriyani 🍗", val: 5 },
+                    { text: "More than sleep 😴", val: 7 },
+                    { text: "More than anything ❤️", val: 10 },
+                ]
+            },
+            {
+                q: "Who tries to resolve the fight? 😏",
+                options: [
+                    { text: "Me 😒 (fine...)", val: 5 },
+                    { text: "You 😌 (as usual)", val: 10 },
+                    { text: "Both 😇 (liar)", val: 9 }
+                ]
+            },
+            {
+                q: "How am I looking in your eyes? 😳",
+                options: [
+                    { text: "Lovely 😍", val: 7 },
+                    { text: "Cutest 💖", val: 10 },
+                    { text: "Hot and cute 🔥", val: 9 }
+                ]
+            },
+            {
+                q: "What is my favourite thing about you? 💑",
+                options: [
+                    { text: "coming back to me after a fight 🤭", val: 9 },
+                    { text: "The comfort & support when I'm ill 💕", val: 10 },
+                    { text: "Being funny to make me laugh ❤️", val: 7 }
+                ]
+            },
+            {
+                q: "In which I look cute and pretty",
+                options: [
+                    { text: "Tshirts and shorts🤭", val: 10 },
+                    { text: "Short top and jeans 💕", val: 9 },
+                    { text: "Traditional ❤️", val: 7 }
+                ]
+            },
+            {
+                q: "What you don't like about me? 💑",
+                options: [
+                    { text: "Crying 🤭", val: 7 },
+                    { text: "Getting angry 💕", val: 5 },
+                    { text: "Absolutely nothing ❤️", val: 10 }
+                ]
+            },
+            {
+                q: "How do you see me when I'm crying 💑",
+                options: [
+                    { text: "Funny and messy 🤭", val: 9 },
+                    { text: "Awww Cuteee 💕", val: 10 },
+                    { text: "Chaotic and problamatic❤️", val: 5 }
+                ]
+            },
+            {
+                q: "Where is the most romantic day we ever had? 💑",
+                options: [
+                    { text: "Yercaud", val: 9 },
+                    { text: "Home[May 22 2025]", val: 10 },
+                    { text: "monthiversery in dubai", val: 7 }
+                ]
+            },
+            {
+                q: "Which dates you want to celebrate the most? 💑",
+                options: [
+                    { text: "17 oct & 27", val: 8 },
+                    { text: "12 & 13 April", val: 10 },
+                    { text: "21 & 22 May", val: 9 }
+                ]
+            },
+            {
+                q: "What do you love the most about our relationship and me? 💑",
+                options: [
+                    { text: "The fun we have 🤭", val: 8 },
+                    { text: "The comfort & support 💕", val: 9 },
+                    { text: "Everything. Literally everything. ❤️", val: 10 }
+                ]
+            }
+        ];
+
+        function startQuiz() {
+            document.getElementById("startScreen").classList.add("hidden");
+            document.getElementById("quizScreen").classList.remove("hidden");
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQ];
+            document.getElementById("questionText").innerText = q.q;
+
+            const optionsDiv = document.getElementById("options");
+            optionsDiv.innerHTML = "";
+
+            q.options.forEach((opt, idx) => {
+                optionsDiv.innerHTML += `
+            <label>
+                <input type="radio" name="option" value="${opt.val}" onclick="animateSelection(${opt.val}, this)">
+                ${opt.text}
+            </label><br><br>
+        `;
+            });
+        }
+
+        function animateSelection(value, el) {
+            const label = el.parentElement;
+
+            // Remove previous animations
+            label.classList.remove("wiggle", "pulse");
+
+            // Low value → wiggle
+            if (value <= 8) {
+                label.classList.add("wiggle");
+            }
+            // Medium → pulse
+            else if (value <= 9) {
+                label.classList.add("pulse");
+            }
+            // High → floating heart animation
+            else {
+                createFloatingHearts();
+            }
+        }
+
+        function createFloatingHearts() {
+            for (let i = 0; i < 3; i++) {
+                let heart = document.createElement("div");
+                heart.className = "heart";
+                heart.innerHTML = "💖";
+
+                heart.style.left = Math.random() * 80 + "%";
+                heart.style.top = "60%";
+
+                document.body.appendChild(heart);
+
+                setTimeout(() => heart.remove(), 1500);
+            }
+        }
+
+
+        function nextQuestion() {
+            const selected = document.querySelector('input[name="option"]:checked');
+            if (!selected) {
+                alert("Pick one answer bava 😤");
+                return;
+            }
+
+            score += parseInt(selected.value);
+            currentQ++;
+            document.getElementById("scoreText").innerText = `${score} points`;
+            if (currentQ >= questions.length) {
+                showScore();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function showScore() {
+            document.getElementById("quizScreen").classList.add("hidden");
+            document.getElementById("scoreScreen").classList.remove("hidden");
+
+            document.getElementById("scoreText").innerText = `${score} points`;
+
+            let msg = "";
+            if (score < 80) msg = "Hmm... 😏 madichi pettuko, you are blocked.";
+            else if (score < 90) msg = "parledu brathikipoyav 🤭😍";
+            else msg = "Awwww you love me soo MUCH ❤️❤️ I love you tooo much bavaaaa";
+
+            document.getElementById("scoreMessage").innerText = msg;
+        }
+
+        function finalScreen() {
+            document.getElementById("scoreScreen").classList.add("hidden");
+            document.getElementById("finalScreen").classList.remove("hidden");
+        }
+
+        function yes() {
+            document.getElementById("finalAnswer").innerHTML = "YAAAAY!!! 😭💖 I love youuuu! But I miss youuuuuuuuu";
+        }
+
+        function no() {
+            const noBtn = document.getElementById("noBtn");
+            noBtn.style.position = "absolute";
+            noBtn.style.left = Math.random() * 70 + "%";
+            noBtn.style.top = Math.random() * 70 + "%";
+        }
+    </script>
+
+</body>
+
+</html>
